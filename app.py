@@ -1,6 +1,6 @@
 """
 Customer Churn Risk Analyzer
-Fidelity Investments Co-op Interview Project
+Personal Project
 Author: Ankita Pichuka · MS Data Analytics @ Northeastern
 Dataset: Kaggle Bank Customer Churn Dataset
 """
@@ -31,7 +31,7 @@ import io
 
 # ── Page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Churn Risk Analyzer | Fidelity",
+    page_title="Churn Risk Analyzer",
     page_icon="📉",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -291,7 +291,7 @@ def apply_dark(fig):
 # ══════════════════════════════════════════════════════════════════════════════
 
 with st.sidebar:
-    st.markdown('<p class="hero-sub">▸ FIDELITY INVESTMENTS  ▸  CO-OP PROJECT</p>', unsafe_allow_html=True)
+    st.markdown('<p class="hero-sub">▸ ANKITA PICHUKA  ▸  NORTHEASTERN UNIVERSITY</p>', unsafe_allow_html=True)
     st.markdown('<p class="hero-title">Churn Risk<br>Analyzer</p>', unsafe_allow_html=True)
     st.markdown("---")
     st.markdown('<p class="section-header">Navigation</p>', unsafe_allow_html=True)
