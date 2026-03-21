@@ -93,8 +93,8 @@ Raw CSV  →  Drop IDs  →  Feature Engineering  →  Label Encoding
 
 ## 👤 Author
 
-**MS Data Analytics Student**  
-Northeastern University  
+**Ankita Pichuka**  
+MS Data Analytics · Northeastern University  
 Skills: Python · Pandas · Scikit-learn · NLP · Streamlit
 
 ---
