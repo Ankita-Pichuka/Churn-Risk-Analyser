@@ -1,7 +1,7 @@
 """
 Customer Churn Risk Analyzer
-Personal Project
-Author: Ankita Pichuka · MS Data Analytics @ Northeastern
+Fidelity Investments Co-op Interview Project
+Author: Ankita Pichuka
 Dataset: Kaggle Bank Customer Churn Dataset
 """
 
@@ -31,7 +31,7 @@ import io
 
 # ── Page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Churn Risk Analyzer",
+    page_title="Churn Risk Analyzer | Fidelity",
     page_icon="📉",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -163,14 +163,16 @@ def _synthetic_dataset(n: int = 10_000, seed: int = 42) -> pd.DataFrame:
     credit  = rng.normal(650, 97, n).clip(350, 850).astype(int)
     crcard  = rng.integers(0, 2, n)
     active  = rng.integers(0, 2, n)
-    # logistic churn probability
+    # logistic churn probability — stronger signal
     log_odds = (
-        -3.5
-        + 0.04 * (age - 38)
-        + 0.8  * (geos == "Germany").astype(float)
-        - 0.6  * active
-        + 0.4  * (balance == 0).astype(float)
-        - 0.3  * (tenure > 5).astype(float)
+        -1.2
+        + 0.07 * (age - 38)
+        + 1.5  * (geos == "Germany").astype(float)
+        - 2.0  * active
+        + 1.0  * (balance == 0).astype(float)
+        - 0.5  * (tenure > 5).astype(float)
+        + 0.8  * (products > 2).astype(float)
+        - 0.004 * (credit - 650)
     )
     p_churn = 1 / (1 + np.exp(-log_odds))
     churn   = (rng.random(n) < p_churn).astype(int)
@@ -235,22 +237,31 @@ def train_models(X, y):
 
     models = {
         "Random Forest": RandomForestClassifier(n_estimators=200, max_depth=10,
-                                                 random_state=42, n_jobs=-1),
+                                                 random_state=42, n_jobs=-1,
+                                                 class_weight='balanced'),
         "Gradient Boosting": GradientBoostingClassifier(n_estimators=150, max_depth=4,
                                                          learning_rate=0.1, random_state=42),
-        "Logistic Regression": LogisticRegression(C=0.5, max_iter=1000, random_state=42),
+        "Logistic Regression": LogisticRegression(C=0.5, max_iter=1000, random_state=42,
+                                                   class_weight='balanced'),
     }
     results = {}
     for name, mdl in models.items():
         if name == "Logistic Regression":
             mdl.fit(X_train_sc, y_train)
-            preds    = mdl.predict(X_test_sc)
             proba    = mdl.predict_proba(X_test_sc)[:, 1]
+            preds    = (proba >= 0.4).astype(int)
             cv_X, cv_sc = X_train_sc, True
+        elif name == "Gradient Boosting":
+            scale = (y_train == 0).sum() / (y_train == 1).sum()
+            sample_weights = np.where(y_train == 1, scale, 1.0)
+            mdl.fit(X_train, y_train, sample_weight=sample_weights)
+            proba = mdl.predict_proba(X_test)[:, 1]
+            preds = (proba >= 0.4).astype(int)
+            cv_X, cv_sc = X_train, False
         else:
             mdl.fit(X_train, y_train)
-            preds = mdl.predict(X_test)
             proba = mdl.predict_proba(X_test)[:, 1]
+            preds = (proba >= 0.4).astype(int)
             cv_X, cv_sc = X_train, False
 
         cv = cross_val_score(mdl,
