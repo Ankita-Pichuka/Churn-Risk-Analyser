@@ -5,6 +5,8 @@
 
 A production-quality Streamlit dashboard that predicts customer churn risk using the [Kaggle Bank Churn Dataset](https://www.kaggle.com/datasets/shrutimechlearn/churn-modelling). Built to demonstrate end-to-end ML pipeline skills for a data analytics role.
 
+The app is live at https://churn-risk-analyser-byankitapichuka.streamlit.app/
+
 ---
 
 ## ✨ Features
